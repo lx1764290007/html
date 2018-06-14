@@ -678,47 +678,7 @@ p.bonus {
                        })
                    })    
 
-                 //彩蛋部分
-                 var xu,shui,mei;
-                 $(document).keydown(function(event){
-                 	if(event.keyCode == 88) {
-                 		xu = 88;
-                 	}else if(event.keyCode == 83){
-                 		shui = 83;
-                 	}else if(event.keyCode == 77){
-                 		mei = 77;
-                 	}
-                 })
-                   $(document).keyup(function(event){
-                   	 if(xu == 88 && shui == 83 && mei == 77){
-                 		audio.src = 'bonusScene/张宇桦 - 优美的小调.mp3';
-                        $('p#songName').text('打心里宣你').css({
-                        	'color' : 'pink',
-                        	'font-size' : '16px'
-                             });
 
-                        $('.circle').css('background-image','url(bonuSscene/xsm.jpg)');
-                          $('p#singer').text('梅梅梅*E999').css({
-                        	'color' : 'pink',
-                        	'font-size' : '16px'
-                             });
-                          setTimeout(xsm,3000)
-               	        audio.load();
-               	        audio.play();
-               	        //重置
-                 		xu=null;
-                 		shui=null;
-                 		mei=null;
-                 	}
-                   })
-                   function xsm(){
-                     if(confirm("如果你愿意，我想把这送你当信物")){
-                           alert('Got it!Thanks,my girl');
-                   }else{
-                   	alert("抱歉，客观姿势不对，请重试");
-                   	xsm();
-                   }
-               }
 </script>
 
 
