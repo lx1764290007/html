@@ -1,0 +1,728 @@
+
+     <!DOCTYPE html>
+      <head>
+      <title>响应式音乐播放器</title>
+     <meta http-equiv = "X-UA-Compatible" content = "IE=edge,chrome=1" />
+     <meta charset="utf-8">
+     <meta name="viewport" content="width=device-width,initial-scale=1,user-scalable=no" /> 
+      <!--通用重置样式-->
+      <link href="https://cdn.bootcss.com/normalize/8.0.0/normalize.css" rel="stylesheet" />
+      <link href="https://at.alicdn.com/t/font_691758_gv9zp2mvs0b.css" rel="stylesheet" />
+
+      <script src="https://cdn.bootcss.com/jquery/3.3.1/jquery.min.js"></script>
+
+
+      <style>
+
+      @font-face {  
+      	font-family: 'myFont'; 
+      	src: url('font/xg.eot');
+      	src: url('font/xg.woff') format("woff"),
+      	     url('font/xg.otf') format("embedded-opentype"),
+      	     url('font/xg.ttf') format("truetype"),
+      	     url('font/xg.svg') format("svg");
+      	 }
+      html,body {
+        display: flex;
+      	width: 100%;
+      	height: 100%;
+      	align-items: center;
+      	justify-content: center;
+      }
+.container {
+      	display: flex;
+       	width: 40%;
+       	flex-direction: row;
+       	flex-wrap: wrap;
+       	padding: 1rem;
+       	box-shadow: 5px 4px 3px gray;
+       	border-radius: 1rem;
+       	justify-content: space-around;
+       	flex-wrap: wrap;
+       	z-index: 0;
+        background: #232526;  
+        background: -webkit-linear-gradient(to bottom, #232526,#222333,#414345); 
+        background: linear-gradient(to bottom, #232526,#222333,#414345); 
+
+       }
+
+.container .box1 {
+      	display: flex;
+        align-items: center;
+        justify-content: space-around;
+        flex-direction: row;
+        padding: 1rem;
+       }
+ .box1 .circle {
+ 	    position: relative;
+        border-radius: 50%; 
+        background-size: cover;
+        width: 9rem;
+        height: 9rem;
+        animation: circle 5.5s linear 1s infinite normal forwards;
+        overflow: hidden;
+ }
+ .circle img {
+ 	    width: 100%;
+ 	    max-width: 100%
+ }
+  .box1 .msg {
+        width: 8.5rem;
+        height: 8.5rem;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: space-around;
+        font-size: 16px;
+        font-weight: bold;
+        font-family: "FangSong","微软雅黑","Simsum","Arial Narrow", sans-serif;
+        color: #fff;
+        word-break: keep-all;
+ }
+.container .box2 {
+        flex: 1;
+        flex-direction: column;
+       }
+ .container .linner {
+       width: 100%;
+      	display: flex;
+       flex-direction: row;
+  }    
+  .linner p {
+  	align-self: center;
+  	margin: 0 5px;
+  	font-family: myFont,"FangSong","Simsum","Arial Narrow", sans-serif;
+  	font-size: 16px;
+  	font-weight: bold;
+  	color: #fff;
+  	max-width: 100%;
+  }
+   .container .list {
+       width: 100%;
+       display: none;
+  }   
+  .list ul {
+  	flex-grow: 1;
+    display: flex;
+  	flex-direction: column;
+  	align-content: space-around;
+  	font-family: myFont,"FongSong";
+  	color: hsla(360,98%,98%,0.8);
+  	max-height: 8rem;
+    overflow-y: scroll;
+  }
+  .list ul li {
+  	list-style: none;
+  	line-height:  2rem;
+  	cursor: pointer;
+  	flex-grow: 1;
+  	margin-left: -2.5rem;
+  	justify-content: flex-start;
+  }
+ .list ul li:hover {
+   border-right: 2px solid #fff;
+   background: hsl(20,15%,55%);
+    }
+.box2 .top {
+	   height: 5rem;
+	   text-align: center;
+       display: flex;
+       flex-direction: row;
+       align-items: center;
+       max-width: 100%;
+}
+ i {
+ 	cursor: pointer;
+ }
+.top i {
+	flex: 1;
+	font-size: 2rem;
+	color: hsl(360,98%,98%);
+}
+.top i:nth-child(2){
+	font-size: 2.5rem;
+}
+.top i:hover {
+	color: hsl(120,90%,90%);
+}
+.top i:nth-child(4),.top i:nth-child(5) {
+	flex: 0.7;
+	font-size: 1.3rem;
+	align-self: flex-end;
+}
+
+.box2 .center {
+       display: flex;
+       align-items: row;
+       max-width: 100%;
+}
+.center i {
+	 color:  hsla(360,100%,95%,1);
+     align-self: center;
+     max-width: 100%;
+}
+
+input[type="range"] {
+   -webkit-appearance: none;
+   align-self: center;
+   flex-grow: 1;
+   margin: 16.7px 0;
+}
+
+/*音量反馈信息 */
+.center input[type=range]::before {
+   content: attr(data-attr);
+   color: #fff;
+   position: absolute;
+   font-size: 14px;
+   font-family: myFont;
+   margin-top: 0.5rem;
+}
+/*进度条背景 */
+
+input[type=range]:focus {
+   outline: none;
+}
+.linner input[type=range]::-webkit-slider-runnable-track {
+  width: 100%;
+  height: 6px;
+  cursor: pointer;
+  box-shadow: 1px 1px 1px #000000, 0px 0px 1px #0d0d0d;
+  background: hsl(280,60%,30%);
+  background: linear-gradient(to right, hsl(220,50%,50%),hsl(210,70%,75%),hsl(280,40%,30%)); 
+  background-size: 0 100%;
+  background-repeat: no-repeat;
+  border-radius: 1.3px;
+  border: 0.2px solid #010101;
+  z-index: 3
+}
+.center input[type=range]::-webkit-slider-runnable-track {
+  width: 100%;
+  height: 6px;
+  cursor: pointer;
+  background: linear-gradient(to right,hsl(220,50%,50%),hsl(280,50%,50%));
+  background-size: 50% 100%;
+  background-repeat: no-repeat;
+  box-shadow: 1px 1px 1px #000000, 0px 0px 1px #0d0d0d;
+  border-radius: 1.3px;
+  border: 0.2px solid #010101;
+}
+
+
+input[type=range]::-webkit-slider-thumb {
+  box-shadow: 1px 1px 1px #000000, 0px 0px 1px #0d0d0d;
+  border: 1px solid #000000;
+  height: 1rem;
+  width: 1rem;
+  border-radius: 50%;
+  background: #ffffff;
+  cursor: pointer;
+  -webkit-appearance: none;
+  margin-top: -5px;
+}
+.center input[type=range]::-moz-range-track {
+  width: 100%;
+  height: 6px;
+  cursor: pointer;
+  box-shadow: 1px 1px 1px #000000, 0px 0px 1px #0d0d0d;
+  border-radius: 1.3px;
+  border: 0.2px solid #010101;
+  background: hsla(220,50%,50%);
+  background: linear-gradient(to right,hsla(220,50%,50%),hsl(280,50%,50%));
+  background-size: 50% 100%;
+  background-repeat: no-repeat;
+
+}
+
+.linner input[type=range]::-moz-range-track {
+  width: 100%;
+  height: 6px;
+  cursor: pointer;
+  box-shadow: 1px 1px 1px #000000, 0px 0px 1px #0d0d0d;
+  background: hsl(280,60%,30%); /* fallback for old browsers */
+  background: linear-gradient(to right, hsla(220,50%,50%),hsl(210,70%,75%),hsl(280,40%,30%)); 
+  background-size: 0 100%;
+  background-repeat: no-repeat;
+  border-radius: 1.3px;
+  border: 0.2px solid #010101;
+}
+input[type=range]::-moz-range-thumb {
+  box-shadow: 1px 1px 1px #000000, 0px 0px 1px #0d0d0d;
+  border: 1px solid #000000;
+  height: 1rem;
+  width: 1rem;
+  border-radius: 50%;
+  background: #ffffff;
+  cursor: pointer;
+}
+input[type=range]::-ms-track {
+    width: 100%;
+    height: 8px;
+    cursor: pointer;
+    background: transparent;
+    border-color: transparent;
+    color: transparent;
+}
+input[type=range]::-ms-fill-lower {
+    background: hsl(280,60%,30%); 
+    background: linear-gradient(to right, hsl(50,40%,50%),hsl(210,60%,50%),hsl(280,40%,30%)); 
+    border: 0.2px solid #010101;
+    border-radius: 2.6px;
+    box-shadow: 1px 1px 1px #000000, 0px 0px 1px #0d0d0d;
+}
+input[type=range]::-ms-fill-upper {
+    background: #f0f0f0;
+    border: 0.2px solid #010101;
+    border-radius: 2.6px;
+    box-shadow: 1px 1px 1px #000000, 0px 0px 1px #0d0d0d;
+}
+input[type=range]::-ms-thumb {
+    box-shadow: 1px 1px 1px #000000, 0px 0px 1px #0d0d0d;
+    border: 1px solid #000000;
+    height: 0.7rem;
+    width: 0.7rem;
+    border-radius: 50%;
+    background: #ffffff;
+    cursor: pointer;
+    margin-top: -1px;
+}
+
+ @keyframes circle {
+	0%{transform: rotateX(0);}
+	50%{opacity: 0.6;}
+	100% {transform: rotate(360deg);opacity: 1;}
+}
+ p#bonus,p.bonus {
+ 	font-size: 14px;
+ 	color: #fff;
+ 	line-height: 3.5em;
+ 	padding: 0 2em;
+ 	background-color: hsl(50,10%,15%);
+ 	text-align: center;
+ 	position: absolute;
+ 	align-self: flex-end;
+ 	margin-top: -7em;
+ 	display: none;
+ }
+p.bonus {
+ 	font-size: 12px;
+ 	color: yellow;
+ }
+
+ @media screen and (min-width: 960px) and (max-width: 1199px) {
+         .box2 .center {
+            width: 45%;
+      }
+         .box2 .top {
+         	text-align: center;
+         	align-content: space-between;
+         }
+   }
+ @media screen and (min-width: 768px) and (max-width: 959px) { 
+        .box2 .center {
+           display: none;
+     }
+        .top i:nth-child(1){
+	       order: 2;
+      }
+        .top i:nth-child(2){
+	      order:3;
+      }
+        .top i:nth-child(3){
+	      order:4;
+      }
+        .top i:nth-child(4){
+	      order: 1;
+       }
+       .top i:nth-child(5){
+	      order: 5
+     }
+        .box2 .top {
+        	text-align: center;
+        }
+  }
+ @media only screen and (min-width: 480px) and (max-width: 767px){
+
+      .container .box1 {
+         flex-direction: column-reverse;
+        } 
+
+        .box2 .center {
+           display: none;
+     }
+        .top i:nth-child(1){
+	       order: 2;
+      }
+        .top i:nth-child(2){
+	      order:3;
+      }
+        .top i:nth-child(3){
+	      order:4;
+      }
+        .top i:nth-child(4){
+	      order: 1;
+       }
+       .top i:nth-child(5){
+	      order: 5
+     }
+        .box2 .top {
+        	text-align: center;
+        	order: 2;
+        }
+     .container {
+     	flex-direction: column;
+     }
+     .linner {
+     	margin-top: 3rem;
+     }
+   } 
+ @media only screen and (max-width: 479px) {
+      .container .box1 {
+         display: flex;
+       	 flex: 1;
+         flex-direction: column-reverse;
+        } 
+
+        .box2 .center {
+           display: none;
+     }
+        .top i:nth-child(1){
+	       order: 2;
+      }
+        .top i:nth-child(2){
+	      order:3;
+      }
+        .top i:nth-child(3){
+	      order:4;
+      }
+        .top i:nth-child(4){
+	      order: 1;
+       }
+       .top i:nth-child(5){
+	      order: 5
+     }
+        .box2 .top {
+        	text-align: center;
+        }
+
+   } 
+      </style>
+           <style> </style>   <!--用于刷新currentTime背景-->
+
+           <style> </style>       <!--用于刷新volumn背景-->
+
+           <style> </style>       <!--用于调整ie浏览器环境下样式不一致的问题-->
+
+        <script>
+        //解决火狐浏览器环境初始页面下range滑块不在起点的问题
+	  	 if(navigator.userAgent.match(/Firefox/i) == 'Firefox'){ 
+	  	 	 $('#l').val(0)
+	  	 }
+	  	 //调整IE环境下样式不一致的问题
+           if (!!window.ActiveXObject || "ActiveXObject" in window){
+         	    var ieInput = 'input[type=range]::-ms-track {';
+                $('style').eq(3).html(ieInput+'margin-top:15px;'+'}')
+                    }
+           </script>
+
+      </head>
+  <body>
+      <div class="container">
+        <div class="box1">
+            <div class="circle"></div>
+            <div class="msg">
+            <p id="songName"></p>
+            <p id="singer"></p>
+            </div>
+        </div>
+        <div class="box2">
+         <div class="top">
+         <i class="iconfont icon-shangyishou" id="prev" title="上一首"></i>
+         <i class="iconfont icon-iconset0481" id="play" title="播放/暂停"></i>
+         <i class="iconfont icon-xiayishou" id="next" title="下一首"></i>
+         <i class="iconfont icon-liebiao" title="展开/收起歌单"></i>
+         <i class="iconfont icon-liebiaoxunhuan" id="how" title="列表循环"></i>
+         </div>
+         <div class="center">
+         <i class="iconfont icon-shengyin" id="Volumn"></i>
+         <input type="range" min="0" max="1" step="0.1" value="0.5" id="volumn" data-attr=""/>
+         </div>
+        </div>
+        <div class="linner">
+          <p id="currentTime"></p>
+           <input type="range" min="0" id="l"  value="0" />
+            <p id="duration"></p>      
+          </div>
+        <div class="list">
+           <ul>
+             <li>秋~华恋~ - α·Pav -</li>
+             <li>Only Wish - CNicholas -</li>
+             <li>アイロニ - Majiko -</li>
+             <li>Letter - Iris -</li>
+             <li>My Soul - July -</li>
+             <li>Old Memory - Manack -</li>
+             <li>Flower Dance - Dj Okawari -</li>
+             <li>无力挽回 - 周柏豪 -</li>
+             <li>不能说的秘密 - 周杰伦 -</li>
+
+           </ul>
+        </div>
+        </div>
+
+<audio id="audio" preload="metadata" hidden ></audio>
+<script>
+//构造歌曲对象信息
+	 function songs(name,singer,photo,src){
+	 	           this.name=name;
+	 	           this.singer=singer;
+	 	           this.photo=photo;
+	 	           this.src=src;
+	 }
+	 var song1=new songs('秋~华恋~','- α·Pav -','imgs/α·Pav.jpg','source/α·Pav - 秋~华恋~.mp3');
+	 var song2=new songs('Only Wish','- CNicholas -','imgs/only-wish.jpg','source/CNicholas Cheung - Only Wish (惟愿).mp3');
+	 var song3=new songs('アイロニ','- まじ娘 -','imgs/反语.jpg','source/majiko (まじ娘) - アイロニ (反语) (New arrange).mp3');
+	 var song4=new songs('Letter','- Iris -','imgs/letter.jpg','source/Iris - Letter.mp3');
+	 var song5=new songs('My Soul','- July -','imgs/mySoul.jpg','source/줄라이 (July) - My Soul.mp3');
+     var song6=new songs('Old Memory','- Manack -','imgs/oldMemory.jpg','source/三輪学 (Manack) - Old Memory.mp3');
+     var song7=new songs('FLower Dance','- Dj Okawari -','imgs/flowerDance.jpg','source/DJ OKAWARI - Flower Dance.mp3');
+     var song8=new songs('无力挽回','- 周柏豪 -','imgs/无力挽回.jpg','source/周柏豪 - 无力挽回.mp3');
+     var song9=new songs('不能说的秘密','- 周杰伦 -','imgs/不能说的秘密.jpg','source/周杰伦 - 不能说的秘密.mp3');
+     var songsArr = [song1,song2,song3,song4,song5,song6,song7,song8,song9];
+    
+	  $('document').ready(function(){
+       
+ 
+	  	  $('.circle').css('animationPlayState','paused');
+        //页面加载完应当加载第一首歌曲
+	     var audio = document.getElementById('audio');
+	        var t,n;	 
+             audio.src=songsArr[0].src;
+             audio.load();
+              $('p#songName').text(songsArr[0].name);
+              $('p#singer').text(songsArr[0].singer);
+              $('.circle').css('background-image','url('+songsArr[0].photo+')');
+        
+       //当歌曲准备完毕时反馈/计算歌曲的元信息
+           $('#audio').on('canplay',function(){
+              var t=audio.duration;
+                  $('p#duration').text('0'+Math.floor(t/60)+":"+(t%60/100).toFixed(2).slice(-2) );
+                   $('input#l').attr('max',t)
+                      $('#volumn').val(audio.volumn); 
+                    console.log('state is ok');
+   })
+        //监听歌曲播放事件，调整进度currentTime
+       $('#audio').bind('timeupdate',function(){
+       	     var n=audio.currentTime;
+       	     var t=audio.duration;
+               //将cuurenTime以min和s表示（保留两位小数）
+       	    $('p#currentTime').text('0'+Math.floor(n/60)+":"+(n%60/100).toFixed(2).slice(-2) ); 
+       	    $('input#l').val(n).trigger('input'); //触发背景校正函数
+       })
+       //监听range值是否被拖动，同时校正歌曲进度
+               $('input#l').bind('change',function(){ 
+            	  audio.currentTime = $(this).val();
+            })
+
+        //进度条background-size，head末尾新建样式表覆盖原有的--通过判断浏览器内核种类以便修改其私有属性
+       var googleCurrent ='.linner input[type=range]::-webkit-slider-runnable-track{background-size:';
+       var firefoxCurrent ='.linner input[type=range]::-moz-range-track {background-size:';
+       var styleLength = $('style').length;
+      console.log(styleLength)
+          $('input#l').on('input',function(){
+       	        var n = audio.currentTime;
+       	        var t = audio.duration;  
+       	        var m=n/t;  
+       	        //当前进度与总进度的长度比值（0.35是调整值）用作每次background-size的增量值
+                var val = m.toFixed(4)*100+0.35;  
+              if(navigator.userAgent.match(/Chrome/i) == 'Chrome'){ 
+                   $('style').eq(2).html(googleCurrent+val+'%'+' '+'100%'+'}')
+               }
+                else if(navigator.userAgent.match(/Firefox/i) == 'Firefox'){
+                   $('style').eq(2).html(firefoxCurrent+val+'%'+' '+'100%'+'}')
+       }
+ 
+   }) 
+                var index = 0;  //播放索引值
+                var how = 0;  //随机播放，单曲循环，列表循环方式判断值
+                //监听歌曲播放结束事件
+               $('#audio').bind('ended',function(){ 
+                  if(index<songsArr.length-1 && how==0){
+               	  	index+=1;
+               	  }else if(index>=songsArr.length-1 && how==0){
+               	  	index=0;
+               	  }else if(how==1){
+               	  	index=Math.floor(Math.random()*songsArr.length);
+               	  }else if(how==2){
+               	  	index=index;
+               	  }        	 
+               	  audio.src = songsArr[index].src;
+               	  $('p#songName').text(songsArr[index].name);
+                  $('p#singer').text(songsArr[index].singer);
+                  $('.circle').css('background-image','url('+songsArr[index].photo+')');
+               	  audio.load();
+               	  audio.play();
+               })
+
+               $('#prev').click(function(){
+               	   if(index>=1){
+               	  index-=1;
+                  audio.src = songsArr[index].src;
+                  $('p#songName').text(songsArr[index].name);
+                  $('p#singer').text(songsArr[index].singer);
+                  $('.circle').css('background-image','url('+songsArr[index].photo+')');
+               	  audio.load();
+               	  audio.play();
+
+               	   }else{
+               	  console.log('当前已是第一首')
+
+               	   }
+               })
+
+                 $('#next').click(function(){
+                 	if(index<songsArr.length-1){
+                        index+=1;
+                        audio.src = songsArr[index].src;
+                        $('p#songName').text(songsArr[index].name);
+                        $('p#singer').text(songsArr[index].singer);
+                        $('.circle').css('background-image','url('+songsArr[index].photo+')');
+               	        audio.load();
+               	        audio.play();
+                 	}else{
+                 		console.log('当前已是最后一首')
+                 	}
+                 })
+             //播放/暂停控制
+                 $('#play').click(function(){
+                   if(audio.paused){
+       	    	        $(this).prop('class','iconfont icon-zanting');
+       	    	          audio.play();
+       	    }else if(audio.play){
+                 	 audio.pause();
+                 	 $(this).prop('class','iconfont icon-iconset0481');
+                 	}
+                 })
+                 //校正播放和暂停按钮的样式,控制动画暂停或播放
+                       $('#audio').on('play',function(){
+                       	  $('#play').prop('class','iconfont icon-zanting');
+                       	  $('.circle').css('animationPlayState','running');
+                       	  console.log(123)
+                       })
+                       $('#audio').on('pause',function(){
+                       	    $('#play').prop('class','iconfont icon-iconset0481');
+                       	    $('.circle').css('animationPlayState','paused');
+                       })
+               //歌单点击后播放
+                       $('.list ul li').click(function(){
+                         index = $(this).index();
+                           audio.src = songsArr[index].src;
+                            $('p#songName').text(songsArr[index].name);
+                             $('p#singer').text(songsArr[index].singer);
+                             $('.circle').css('background-image','url('+songsArr[index].photo+')');
+               	        audio.load();
+               	        audio.play();
+                       })
+                         //展开/合并歌单
+                       $('.icon-liebiao').click(function(){
+                         $('.list').stop(true,true).slideToggle();
+                       })
+
+                       //音量控制,音量背景色控制
+                       $('#volumn').on('change input',function(){
+                       	    audio.volumn = $(this).val();
+                       var googleVolumn ='.center input[type=range]::-webkit-slider-runnable-track{background-size:';
+                       var firefoxVolumn ='.center input[type=range]::-moz-range-track {background-size:' ;
+                       	    $(this).attr('data-attr',audio.volumn);
+                       	    //提示当前音量大小，延迟1s后改值为空格以“隐藏”
+                       	      setTimeout(function(){
+                       	      	$('#volumn').attr('data-attr','')
+                       	      },1000);
+                       	    if(audio.volumn=="0"){
+                       	    	audio.muted = true;
+                       	    }else{
+                       	    	audio.muted = false;
+                       	    }
+           if(navigator.userAgent.match(/Chrome/i) == 'Chrome'){ 
+           	       $('style').eq(1).html(googleVolumn+(audio.volumn)*100+'%'+' '+'100%'+'}');
+             }
+                else if(navigator.userAgent.match(/Firefox/i) == 'Firefox'){
+                         $('style').eq(1).html(firefoxVolumn+(audio.volumn)*100+'%'+' '+'100%'+'}');
+                        }
+                       })
+                            $('#Volumn').click(function(){
+                                if(!audio.muted){
+                                	$(this).prop('class','iconfont icon-jingyin1');
+                                	audio.muted = true;
+                                }else{
+                                	$(this).prop('class','iconfont icon-shengyin');
+                                	audio.muted = false;
+                                }
+                            })
+                            //播放方式
+                            $('#how').click(function(){
+                            	if($(this).hasClass('iconfont icon-liebiaoxunhuan')){
+                            		$(this).prop('class','iconfont icon-icon-').attr('title','随机播放');
+                            		 how=1;
+                            	}else if($(this).hasClass('iconfont icon-icon-')){
+                            		$(this).prop('class','iconfont icon-danquxunhuan').attr('title','单曲循环');
+                            		how=2;
+                            	}else if($(this).hasClass('iconfont icon-danquxunhuan')){
+                            		$(this).prop('class','iconfont icon-liebiaoxunhuan').attr('title','列表循环');
+                            			how=0;
+                            		}
+                            	
+                            })
+                            //监听播放错误事件
+                       $('#audio').bind('error',function(){
+                       	     alert('出错啦！试试刷新页面')
+                       })
+                   })    
+
+                 //彩蛋部分
+                 var xu,shui,mei;
+                 $(document).keydown(function(event){
+                 	if(event.keyCode == 88) {
+                 		xu = 88;
+                 	}else if(event.keyCode == 83){
+                 		shui = 83;
+                 	}else if(event.keyCode == 77){
+                 		mei = 77;
+                 	}
+                 })
+                   $(document).keyup(function(event){
+                   	 if(xu == 88 && shui == 83 && mei == 77){
+                 		audio.src = 'bonusScene/张宇桦 - 优美的小调.mp3';
+                        $('p#songName').text('打心里宣你').css({
+                        	'color' : 'pink',
+                        	'font-size' : '16px'
+                             });
+
+                        $('.circle').css('background-image','url(bonuSscene/xsm.jpg)');
+                          $('p#singer').text('梅梅梅*E999').css({
+                        	'color' : 'pink',
+                        	'font-size' : '16px'
+                             });
+                          setTimeout(xsm,3000)
+               	        audio.load();
+               	        audio.play();
+               	        //重置
+                 		xu=null;
+                 		shui=null;
+                 		mei=null;
+                 	}
+                   })
+                   function xsm(){
+                     if(confirm("如果你愿意，我想把这送你当信物")){
+                           alert('Got it!Thanks,my girl');
+                   }else{
+                   	alert("抱歉，客观姿势不对，请重试");
+                   	xsm();
+                   }
+               }
+</script>
+
+
+
+
+  </body>
+  </html>
